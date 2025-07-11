@@ -1,1 +1,79 @@
-"STYLE HERE" 
+body {
+    background-color: #f0f8ff;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 15px;
+}
+
+.filter-mod {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    align-content: left;
+}
+
+.row1 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    column-gap: 1rem;
+}
+
+.row2 {
+    margin-top: 0.5rem;
+}
+
+.main-content {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10rem;
+    margin-top: 3rem;
+}
+
+
+table {
+    width:100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: #ffffff;
+}
+
+th {
+    background-color: #f2f2f2;
+    padding: 10px;
+    border: 1px solic #ccc;
+    text-align: center;
+}
+
+td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+td:first-child
+th:first-child {
+    width: 40px;
+}
+
+.button-mod {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Light Theme */
+body.light-theme {
+    background-color: #ffffff;
+    color: #222222;
+}
+
+/* Dark Theme */
+body.dark-theme {
+    background-color: #1a1a1a;
+    color: #f0f0f0
+}

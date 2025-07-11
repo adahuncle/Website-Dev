@@ -1,1 +1,156 @@
-"START HERE" 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>MDA Tool</title>
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+
+    <!-- jQuery (required by Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 CSS + JS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+</head>
+
+<body class="light-theme">
+        
+    <div class="filter-mod">
+        <label for="row1">Mixer Data Search Filters</label>
+    </div>
+
+    <div class="row1">    
+        <div class="compounds-mod">
+            <label for="compound-select">Compound(s):</label>
+            <select id="compound-select" multiple="multiple" style="width: 100%"></select>
+        </div>
+
+        <div class="start-date-mod">
+            <label for="start-date">Start Date:</label>
+            <input type="date" id="start-date" name="start-date">
+        </div>
+
+        <div class="end-date-mod">
+            <label for="end-date">End Date:</label>
+            <input type="date" id="end-date" name="end-date">
+        </div>
+
+        <div class="batch-id-mod">
+            <label for="batch-id">Batch ID(s)</label>
+            <input type="text" id="batch-id" name="batch-id" placeholder="e.g. 5254679, 2526485, etc."> 
+        </div>
+
+        <div class="dt-reason-mod">
+            <label for="dt-reason-select">Downtime Reason(s)</label>
+            <select id="dt-reason-select" multiple="multiple" style="width: 100%"></select>
+        </div>
+
+    </div>
+
+    <div class="row2">    
+        <div class="search-btn-mod">
+            <button onclick="">🔎 Search Database</button>
+            <button onclick="">✖️ Clear Filters</button>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="main-content">
+        <div class="summary-table-mod">
+            <label for="summary-table">📋 Matching Batches</label>
+            <table id="summary-table">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="select-all-summary" onclick="">
+                        </th>
+                        <th>Compound</th>
+                        <th>Batch ID</th>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>5254679</td>
+                    <td>4637</td>
+                    <td>Power Outage</td>
+                    </tr>
+                    <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>5254680</td>
+                    <td>3514</td>
+                    <td>Maintenance</td>
+                    </tr>
+                    <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>5254681</td>
+                    <td>3421</td>
+                    <td>QA Hold</td>
+                    </tr>
+                    <!--Rows filled from MySQL db-->
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="button-mod">
+            <button onclick="">➕ Add Selected Batches</button>
+            <button onclick="">➖ Remove Selected Batches</button>
+            <button onclick="">🧹 Clear All Selected Batches<br> </button>
+            <button onclick="">📈 Analyze Batches</button>
+        </div>
+
+        <div class="selected-table">
+            <label for="selection-table">📂 Selected Batches for Analysis</label>
+            <table id="selection-table">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="select-all-selection" onclick="">
+                        </th>
+                        <th>Compound</th>
+                        <th>Batch ID</th>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>5254679</td>
+                    <td>4637</td>
+                    <td>Power Outage</td>
+                    </tr>
+                    <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>5254680</td>
+                    <td>3514</td>
+                    <td>Maintenance</td>
+                    </tr>
+                    <tr>
+                    <td><input type="checkbox" class="row-checkbox"></td>
+                    <td>5254681</td>
+                    <td>3421</td>
+                    <td>QA Hold</td>
+                    </tr>
+                    <!--Rows filled from MySQL db-->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
