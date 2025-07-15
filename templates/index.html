@@ -4,8 +4,8 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>MDA Tool</title>
-    <link rel="stylesheet" href="style.css"/>
-    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon"/>
 
     <!-- jQuery (required by Select2) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -18,7 +18,7 @@
 </head>
 
 <body class="light-theme">
-        
+    
     <div class="filter-mod">
         <label for="row1">Mixer Data Search Filters</label>
     </div>
@@ -53,8 +53,8 @@
 
     <div class="row2">    
         <div class="search-btn-mod">
-            <button onclick="">🔎 Search Database</button>
-            <button onclick="">✖️ Clear Filters</button>
+            <button>🔎 Search Database</button>
+            <button>✖️ Clear Filters</button>
         </div>
     </div>
 
@@ -103,10 +103,10 @@
         </div>
 
         <div class="button-mod">
-            <button onclick="">➕ Add Selected Batches</button>
-            <button onclick="">➖ Remove Selected Batches</button>
-            <button onclick="">🧹 Clear All Selected Batches<br> </button>
-            <button onclick="">📈 Analyze Batches</button>
+            <button id="add-selected">➕ Add Selected Batches</button>
+            <button id="remove-selected">➖ Remove Selected Batches</button>
+            <button id="clear-selected">🧹 Clear All Selected Batches<br> </button>
+            <button id="analyze-batches">📈 Analyze Batches</button>
         </div>
 
         <div class="selected-table">
@@ -151,6 +151,6 @@
 
     </div>
 
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

@@ -1,6 +1,4 @@
-// Wait for DOM to load
 $(document).ready(function () {
-    // Initialize Select2
     $('#compound-select').select2({
         placeholder: 'Select Compound(s)',
         ajax: {
@@ -25,12 +23,10 @@ $(document).ready(function () {
         }
     });
 
-    // Handle Search Button Click
-    $('.search-btn-mod button:contains("Search Database")').on('click', function () {
+    $('search-btn-mod button:contains("Search Database")').on('click', function () {
         const filters = collectFilters();
 
-        // test line
-        console.log("Collected filters:", filters);
+        console.log("Collected filters:". filters);
 
         fetch('/api/search', {
             method: 'POST',
@@ -48,10 +44,10 @@ $(document).ready(function () {
         });
     });
 
-    // Handle Clear Filters Button
     $('.search-btn-mod button:contains("Clear Filters")').on('click', function () {
         clearFilters();
     });
+
 });
 
 function collectFilters() {
@@ -74,7 +70,7 @@ function clearFilters() {
 
 function populateSummaryTable(results) {
     const tbody = document.querySelector('#summary-table tbody');
-    tbody.innerHTML = '';
+    tbody.innerhtml = '';
 
     results.forEach(row => {
         const tr = document.createElement('tr');
@@ -86,7 +82,7 @@ function populateSummaryTable(results) {
             <td>${row.start_time}</td>
             <td>${row.end_time}</td>
             <td>${row.duration}</td>
-        `;
-        tbody.appendChild(tr);
+            `;
+            tbody.appendChild(tr);
     });
-}
+} 

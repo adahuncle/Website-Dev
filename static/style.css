@@ -33,6 +33,28 @@ body {
     margin-top: 3rem;
 }
 
+select,
+input[type="date"],
+input[type="text"] {
+    width: 50%;
+    padding: 6px;
+    font-size: 1em;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 0.4em 1em;
+    border: 1px solid #999;
+    background-color: #eee;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+button:hover {
+    background-color: #ddd;
+}
 
 table {
     width:100%;
@@ -54,7 +76,7 @@ td {
     text-align: center;
 }
 
-td:first-child
+td:first-child,
 th:first-child {
     width: 40px;
 }
