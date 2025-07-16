@@ -65,7 +65,6 @@ def prettify(name):
     return name.replace("_", " ").title()
 
 def format_timestamp(group):
-    """Returns a formatted timestamp string from a group DataFrame."""
     date_col = "date_x" if "date_x" in group.columns else "date"
     time_col = "time_x" if "time_x" in group.columns else "time"
 
@@ -73,11 +72,16 @@ def format_timestamp(group):
     time_val = group[time_col].iloc[0] if time_col in group.columns else ""
 
     if pd.api.types.is_timedelta64_dtype(time_val):
-        time_str = (pd.Timestamp('today') + time_val).strftime('%I:%M:%S %p')
+        total_seconds = time_val.total_seconds()
+        hours = int(total_seconds // 3600)
+        minutes = int((total_seconds % 3600) // 60)
+        seconds = int(total_seconds % 60)
+        time_str = f"{hours:02}:{minutes:02}:{seconds:02}"
     else:
         time_str = str(time_val)
 
     return f"{date_val} {time_str}"
+
 
 def add_signal_trace(fig, group, signal, label, color, row, col, timestamp):
     fig.add_trace(
@@ -85,17 +89,16 @@ def add_signal_trace(fig, group, signal, label, color, row, col, timestamp):
             x=group["elapsed_batch_time"],
             y=group[signal],
             mode="lines",
-            name=f"Batch {label}",
+            name=f"{label}",
             line=dict(color=color),
             legendgroup=str(label),
             showlegend=(row == 1 and col == 1),
             customdata=[[str(label)]] * len(group),
             hovertemplate=(
                 f"<b>{prettify(signal)}</b><br>"
-                "Batch: %{customdata[0]}<br>"
+                "%{customdata[0]}<br>"  # Already includes program, batch, and timestamp
                 "Time: %{x}<br>"
-                "Value: %{y}<br>"
-                f"{timestamp}<extra></extra>"
+                "Value: %{y}<extra></extra>"
             ),
         ),
         row=row, col=col
@@ -118,8 +121,13 @@ def plot_all_signals_db(df):
 
     for idx, (label, group) in enumerate(groups):
         color = COLOR_POOL[idx % len(COLOR_POOL)]
-        batch_label = group["batch"].iloc[0] if "batch" in group.columns else "Unknown"
+        batch = group["batch"].iloc[0] if "batch" in group.columns else "Unknown"
+        program = group["program"].iloc[0] if "program" in group.columns else "Unknown Program"
         timestamp = format_timestamp(group)
+
+        # Combine into a descriptive label
+        batch_label = f"{program} | {batch} | {timestamp}"
+
 
         for i, signal in enumerate(SIGNALS):
             if signal not in group.columns:
