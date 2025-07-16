@@ -1,0 +1,9 @@
+{
+
+  "host": "127.0.0.1",
+  "user": "your_username",
+  "password": "your_password",
+  "database": "your_database",
+  "port": "your port (default: 3306)"
+
+}

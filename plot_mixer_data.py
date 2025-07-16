@@ -3,7 +3,20 @@ from plotly.subplots import make_subplots
 import pandas as pd
 import plotly.io as pio
 
+import mysql.connector
+import pandas as pd
+from io import BytesIO
+import os
+import json
+
 pio.renderers.default = "browser"
+
+def load_db_config(path="db_config.json"):
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(base_dir, path)
+    with open(full_path, "r") as f:
+        return json.load(f)
+
 
 SIGNALS = [
     "ram_psi_actual",
@@ -51,7 +64,7 @@ COLOR_POOL = [
 def prettify(name):
     return name.replace("_", " ").title()
 
-#def format_timestamp(group):
+def format_timestamp(group):
     """Returns a formatted timestamp string from a group DataFrame."""
     date_col = "date_x" if "date_x" in group.columns else "date"
     time_col = "time_x" if "time_x" in group.columns else "time"
@@ -68,7 +81,7 @@ def prettify(name):
 
 def add_signal_trace(fig, group, signal, label, color, row, col, timestamp):
     fig.add_trace(
-        go.scatter(
+        go.Scatter(
             x=group["elapsed_batch_time"],
             y=group[signal],
             mode="lines",
@@ -89,7 +102,7 @@ def add_signal_trace(fig, group, signal, label, color, row, col, timestamp):
     )
 
 def plot_all_signals_db(df):
-    df.columns = df.columns.str.strip().str.lower()
+    df.columns = df.columns.astype(str).str.strip().str.lower()
 
     fig = make_subplots(
         rows=2,
@@ -146,5 +159,9 @@ def plot_all_signals_db(df):
         ]
     )
 
-    fig.show()
+    #fig.show()
     return fig
+
+def plot_all_signals_html(df):
+    fig = plot_all_signals_db(df)
+    return pio.to_html(fig, full_html=False)

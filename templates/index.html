@@ -40,8 +40,8 @@
         </div>
 
         <div class="batch-id-mod">
-            <label for="batch-id">Batch ID(s)</label>
-            <input type="text" id="batch-id" name="batch-id" placeholder="e.g. 5254679, 2526485, etc."> 
+            <label for="batch">Batch ID(s)</label>
+            <input type="text" id="batch" name="batch" placeholder="e.g. 5254679, 2526485, etc."> 
         </div>
 
         <div class="dt-reason-mod">
@@ -69,6 +69,7 @@
                         <th>
                             <input type="checkbox" id="select-all-summary" onclick="">
                         </th>
+                        <th style="display:none;">{{ id }}</th>
                         <th>Compound</th>
                         <th>Batch ID</th>
                         <th>Date</th>
@@ -78,24 +79,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>5254679</td>
-                    <td>4637</td>
-                    <td>Power Outage</td>
-                    </tr>
-                    <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>5254680</td>
-                    <td>3514</td>
-                    <td>Maintenance</td>
-                    </tr>
-                    <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>5254681</td>
-                    <td>3421</td>
-                    <td>QA Hold</td>
-                    </tr>
                     <!--Rows filled from MySQL db-->
                 </tbody>
             </table>
@@ -117,6 +100,7 @@
                         <th>
                             <input type="checkbox" id="select-all-selection" onclick="">
                         </th>
+                        <th style="display:none;">{{ id }}</th>
                         <th>Compound</th>
                         <th>Batch ID</th>
                         <th>Date</th>
@@ -126,24 +110,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>5254679</td>
-                    <td>4637</td>
-                    <td>Power Outage</td>
-                    </tr>
-                    <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>5254680</td>
-                    <td>3514</td>
-                    <td>Maintenance</td>
-                    </tr>
-                    <tr>
-                    <td><input type="checkbox" class="row-checkbox"></td>
-                    <td>5254681</td>
-                    <td>3421</td>
-                    <td>QA Hold</td>
-                    </tr>
                     <!--Rows filled from MySQL db-->
                 </tbody>
             </table>

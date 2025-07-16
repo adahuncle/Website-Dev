@@ -3,9 +3,9 @@ import pandas as pd
 import json
 import os
 
-def load_db_config(filename="db.config.json"):
+def load_db_config(filename="db_config.json"):
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    config_path = os.path.join(base_dir, "static", filename)
+    config_path = os.path.join(base_dir, filename)
 
     if os.path.exists(config_path):
         with open(config_path, "r") as f:
@@ -13,7 +13,7 @@ def load_db_config(filename="db.config.json"):
     else:
         raise FileNotFoundError(f"Config file not found at: {config_path}")
     
-def create_mysql_engine(config_path="db.config.json"):
+def create_mysql_engine(config_path="db_config.json"):
     cfg = load_db_config(config_path)
     user = cfg["user"]
     password = cfg["password"]

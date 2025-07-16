@@ -73,7 +73,7 @@ function collectFilters() {
         dt_reasons: $('#dt-reason-select').val() || [],
         start_date: $('#start-date').val() || null,
         end_date: $('#end-date').val() || null,
-        batch_ids: $('#batch-id').val().split(',').map(s => s.trim()).filter(Boolean)
+        batch: $('#batch').val().split(',').map(s => s.trim()).filter(Boolean)
     };
 }
 
@@ -82,7 +82,7 @@ function clearFilters() {
     $('#dt-reason-select').val(null).trigger('change');
     $('#start-date').val('');
     $('#end-date').val('');
-    $('#batch-id').val('');
+    $('#batch').val('');
 }
 
 function formatDate(dateStr) {
@@ -106,6 +106,7 @@ function populateSummaryTable(results) {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><input type="checkbox" class="row-checkbox"></td>
+            <td style="display:none;">${row.id}</td>
             <td>${row.program ?? ''}</td>
             <td>${row.batch ?? ''}</td>
             <td>${formatDate(row.date)}</td>
@@ -149,27 +150,6 @@ document.querySelector("#clear-selected").addEventListener("click", () => {
     selectionTbody.innerHTML = '';
 });
 
-// Analyze selected rows
-document.querySelector("#analyze-batches").addEventListener("click", () => {
-    const rows = document.querySelectorAll("#selection-table tbody tr");
-    const selectedData = [];
-
-    rows.forEach(row => {
-        const cells = row.querySelectorAll("td");
-        selectedData.push({
-            program: cells[1].textContent,
-            batch_id: cells[2].textContent,
-            date: cells[3].textContent,
-            start_time: cells[4].textContent,
-            end_time: cells[5].textContent,
-            duration: cells[6].textContent
-        });
-    });
-
-    console.log("Analyzing batches:", selectedData);
-    // TODO: send to backend, generate plot, etc.
-});
-
 document.querySelector("#select-all-summary").addEventListener("change", function () {
     const checkboxes = document.querySelectorAll("#summary-table .row-checkbox");
     checkboxes.forEach(cb => cb.checked = this.checked);
@@ -178,4 +158,37 @@ document.querySelector("#select-all-summary").addEventListener("change", functio
 document.querySelector("#select-all-selection").addEventListener("change", function () {
     const checkboxes = document.querySelectorAll("#selection-table .row-checkbox");
     checkboxes.forEach(cb => cb.checked = this.checked);
+});
+
+// Analyze selected rows
+document.querySelector("#analyze-batches").addEventListener("click", () => {
+    const rows = document.querySelectorAll("#selection-table tbody tr");
+    const selectedData = [];
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        selectedData.push({
+            id: cells[1].textContent,
+            program: cells[2].textContent,
+            batch: cells[3].textContent,
+            date: cells[4].textContent,
+            start_time: cells[5].textContent,
+            end_time: cells[6].textContent,
+            duration: cells[7].textContent
+        });
+    });
+
+    fetch('/api/prepare-plot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ batches: selectedData })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.plot_id) {
+            window.open(`/plot/${data.plot_id}`, '_blank');
+        } else {
+            alert("Failed to prepare plot");
+        }
+    });
 });
