@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Pycache in any subdirectory
+**/__pycache__/
+
+# Local data files
+*.csv
+*.xlsx
+*.xls
+*.json
+*.db
+*.sqlite3
+*.pkl
+*.h5
+
+# If you have a data folder
+/data/
+/datasets/
+/output/
+/results/
+
+# VSCode settings (optional)
+.vscode/
+
+# Environment files (optional)
+.env
+*.env
