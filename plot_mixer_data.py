@@ -60,6 +60,32 @@ COLOR_POOL = [
     "#59a14f"   # forest green
 ]
 
+def build_dynamic_title(df):
+    programs = sorted(df["program"].dropna().unique())
+    dates = pd.to_datetime(df["date"].dropna().unique())
+
+    # Build program (compound) string
+    if len(programs) == 1:
+        program_part = programs[0]
+    elif len(programs) <= 3:
+        program_part = ", ".join(programs)
+    else:
+        program_part = f"{len(programs)} Compounds"
+
+    # Build date string
+    if len(dates) == 0:
+        date_part = ""
+    elif len(dates) == 1:
+        date_part = f"on {dates[0].date()}"
+    else:
+        years = sorted(set(date.year for date in dates))
+        if len(years) == 1:
+            date_range = f"{min(dates).date()} to {max(dates).date()}"
+            date_part = f"from {date_range}"
+        else:
+            date_part = f"from {min(years)} to {max(years)}"
+
+    return f"Mixer Data Analysis: {program_part} {date_part}".strip()
 
 def prettify(name):
     return name.replace("_", " ").title()
@@ -150,7 +176,7 @@ def plot_all_signals_db(df):
     fig.update_layout(
         height=900,
         width=1400,
-        title_text="Mixer Data Analysis",
+        title_text=build_dynamic_title(df),
         legend_title="Batch ID",
         hovermode="closest",
         dragmode="zoom",
