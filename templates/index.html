@@ -14,6 +14,12 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
 
 </head>
 
@@ -23,7 +29,7 @@
         <label for="row1">Mixer Data Search Filters</label>
     </div>
 
-    <div class="row1">    
+    <div class="row1">
         <div class="compounds-mod">
             <label for="compound-select">Compound(s):</label>
             <select id="compound-select" multiple="multiple" style="width: 100%"></select>
@@ -63,7 +69,7 @@
     <div class="main-content">
         <div class="summary-table-mod">
             <label for="summary-table">📋 Matching Batches</label>
-            <table id="summary-table">
+            <table id="summary-table" class="display stripe">
                 <thead>
                     <tr>
                         <th>
@@ -86,15 +92,15 @@
         </div>
 
         <div class="button-mod">
-            <button id="add-selected">➕ Add Selected Batches</button>
-            <button id="remove-selected">➖ Remove Selected Batches</button>
-            <button id="clear-selected">🧹 Clear All Selected Batches<br> </button>
-            <button id="analyze-batches">📈 Analyze Batches</button>
+            <button id="add-selected">➕<br>Add Selected Batches</button>
+            <button id="remove-selected">➖<br>Remove Selected Batches</button>
+            <button id="clear-selected">🧹<br>Clear All Selected Batches<br> </button>
+            <button id="analyze-batches">📈<br>Analyze Batches</button>
         </div>
 
         <div class="selected-table">
             <label for="selection-table">📂 Selected Batches for Analysis</label>
-            <table id="selection-table">
+            <table id="selection-table" class="display stripe">
                 <thead>
                     <tr>
                         <th>

@@ -29,7 +29,7 @@ body {
     align-items: flex-start;
     flex-direction: row;
     justify-content: center;
-    gap: 10rem;
+    gap: 3rem;
     margin-top: 3rem;
 }
 
@@ -56,29 +56,37 @@ button:hover {
     background-color: #ddd;
 }
 
-table {
-    width:100%;
+#summary-table,
+#selection-table {
     border-collapse: collapse;
-    margin-top: 1rem;
+    table-layout: fixed;
     background-color: #ffffff;
+    margin-top: 1rem;
 }
 
-th {
-    background-color: #f2f2f2;
-    padding: 10px;
-    border: 1px solic #ccc;
-    text-align: center;
+/* Optional: control column alignment if overflow occurs */
+#summary-table td,
+#selection-table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-td {
-    padding: 8px;
+#summary-table th,
+#summary-table td,
+#selection-table th,
+#selection-table td {
+    padding: 8px 10px;
     border: 1px solid #ccc;
     text-align: center;
 }
 
-td:first-child,
-th:first-child {
-    width: 40px;
+#select-all-summary,
+#select-all-selection,
+.row-checkbox {
+    transform: scale(1.5);
+    margin: 4px;
+    cursor: pointer;
 }
 
 .button-mod {

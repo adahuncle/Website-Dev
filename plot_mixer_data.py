@@ -95,21 +95,25 @@ def format_timestamp(group):
     time_col = "time_x" if "time_x" in group.columns else "time"
 
     date_val = group[date_col].iloc[0] if date_col in group.columns else ""
-    time_val = group[time_col].iloc[0] if time_col in group.columns else ""
 
-    if pd.api.types.is_timedelta64_dtype(time_val):
-        total_seconds = time_val.total_seconds()
-        hours = int(total_seconds // 3600)
-        minutes = int((total_seconds % 3600) // 60)
-        seconds = int(total_seconds % 60)
-        time_str = f"{hours:02}:{minutes:02}:{seconds:02}"
+    if pd.api.types.is_timedelta64_dtype(group[time_col]):
+        td = group[time_col].iloc[0]
+        if pd.notnull(td):
+            total_seconds = td.total_seconds()
+            hours = int(total_seconds // 3600)
+            minutes = int((total_seconds % 3600) // 60)
+            seconds = int(total_seconds % 60)
+            time_str = f"{hours:02}:{minutes:02}:{seconds:02}"
+        else:
+            time_str = ""
     else:
-        time_str = str(time_val)
-
-    return f"{date_val} {time_str}"
+        time_str = str(group[time_col].iloc[0])
 
 
-def add_signal_trace(fig, group, signal, label, color, row, col, timestamp):
+    return date_val, time_str
+
+
+def add_signal_trace(fig, group, signal, label, program, batch, date_val, time_val, color, row, col):
     fig.add_trace(
         go.Scatter(
             x=group["elapsed_batch_time"],
@@ -119,11 +123,14 @@ def add_signal_trace(fig, group, signal, label, color, row, col, timestamp):
             line=dict(color=color),
             legendgroup=str(label),
             showlegend=(row == 1 and col == 1),
-            customdata=[[str(label)]] * len(group),
+            customdata=[[program, batch, date_val, time_val]] * len(group),
             hovertemplate=(
                 f"<b>{prettify(signal)}</b><br>"
-                "%{customdata[0]}<br>"  # Already includes program, batch, and timestamp
-                "Time: %{x}<br>"
+                "Compound: %{customdata[0]}<br>"  # Already includes program, batch, and timestamp
+                "Batch: %{customdata[1]}<br>"
+                "Date: %{customdata[2]}<br>"
+                "Time: %{customdata[3]}<br>"
+                "Elapsed: %{x}<br>"
                 "Value: %{y}<extra></extra>"
             ),
         ),
@@ -149,10 +156,10 @@ def plot_all_signals_db(df):
         color = COLOR_POOL[idx % len(COLOR_POOL)]
         batch = group["batch"].iloc[0] if "batch" in group.columns else "Unknown"
         program = group["program"].iloc[0] if "program" in group.columns else "Unknown Program"
-        timestamp = format_timestamp(group)
+        date_val, time_val = format_timestamp(group)
 
         # Combine into a descriptive label
-        batch_label = f"{program} | {batch} | {timestamp}"
+        batch_label = f"{program} | {batch} | {date_val} | {time_val}"
 
 
         for i, signal in enumerate(SIGNALS):
@@ -162,22 +169,26 @@ def plot_all_signals_db(df):
             row = (i // 3) + 1
             col = (i % 3) + 1
 
+
             add_signal_trace(
                 fig=fig,
                 group=group,
                 signal=signal,
                 label=batch_label,
+                program=program,
+                batch=batch,
+                date_val=date_val,
+                time_val=time_val,
                 color=color,
                 row=row,
                 col=col,
-                timestamp=timestamp
             )
 
     fig.update_layout(
         height=900,
         width=1400,
         title_text=build_dynamic_title(df),
-        legend_title="Batch ID",
+        legend_title="Batch Info",
         hovermode="closest",
         dragmode="zoom",
         clickmode='event+select',

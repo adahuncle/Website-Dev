@@ -65,6 +65,51 @@ $(document).ready(function () {
         // test line
         console.log("Cleared filters");
     });
+
+    // Initialize DataTables for both summary and selection tables
+    $('#summary-table').DataTable({
+        autoWidth: false,
+        order: [],
+        pageLength: 50,
+        lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+        columnDefs: [
+        { targets: 1, visible: false },  // Hide ID column via JS
+        { targets: [4], type: 'date' },
+        { targets: [5, 6], type: 'string' }
+        ],
+        columns: [
+            { width: "40px" },  // Checkbox
+            null,               // ID (hidden)
+            { width: "80px" }, // Compound
+            { width: "120px" }, // Batch ID
+            { width: "100px" },  // Date
+            { width: "90px" },  // Start Time
+            { width: "90px" },  // End Time
+            { width: "80px" }   // Duration
+        ]
+    });
+
+    $('#selection-table').DataTable({
+        autoWidth: false,
+        order: [],
+        pageLength: 50,
+        lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+        columnDefs: [
+        { targets: 1, visible: false },  // Hide ID column via JS
+        { targets: [4], type: 'date' },
+        { targets: [5, 6], type: 'string' }
+        ],
+        columns: [
+            { width: "40px" },  // Checkbox
+            null,               // ID (hidden)
+            { width: "80px" }, // Compound
+            { width: "120px" }, // Batch ID
+            { width: "100px" },  // Date
+            { width: "110px" },  // Start Time
+            { width: "110px" },  // End Time
+            { width: "100px" }   // Duration
+        ]
+    });
 });
 
 function collectFilters() {
@@ -98,83 +143,123 @@ function formatTime(timeStr) {
 
 function populateSummaryTable(results) {
     const tbody = document.querySelector('#summary-table tbody');
-    tbody.innerHTML = ''; // Clear old content
-
-    const fragment = document.createDocumentFragment(); // Create fragment
+    const table = $('#summary-table').DataTable();
+    table.clear();
 
     results.forEach(row => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><input type="checkbox" class="row-checkbox"></td>
-            <td style="display:none;">${row.id}</td>
-            <td>${row.program ?? ''}</td>
-            <td>${row.batch ?? ''}</td>
-            <td>${formatDate(row.date)}</td>
-            <td>${formatTime(row.start_time)}</td>
-            <td>${formatTime(row.end_time)}</td>
-            <td>${row.duration ?? ''}</td>
-        `;
-        fragment.appendChild(tr); // Append to fragment instead of DOM
+        table.row.add([
+            `<input type="checkbox" class="row-checkbox">`,
+            row.id,
+            row.program ?? '',
+            row.batch ?? '',
+            formatDate(row.date),
+            formatTime(row.start_time),
+            formatTime(row.end_time),
+            row.duration ?? ''
+        ]);
     });
 
-    tbody.appendChild(fragment); // Append all at once
-}
+    table.draw();
 
-function moveRows(sourceTable, targetTable) {
-    const sourceTbody = document.querySelector(`${sourceTable} tbody`);
-    const targetTbody = document.querySelector(`${targetTable} tbody`);
+    }
 
-    const rows = sourceTbody.querySelectorAll('tr');
-    rows.forEach(row => {
-        const checkbox = row.querySelector('.row-checkbox');
-        if (checkbox && checkbox.checked) {
-            checkbox.checked = false;
-            targetTbody.appendChild(row);
+function copyRows(sourceTableId, targetTableId) {
+    const sourceTable = $(sourceTableId).DataTable();
+    const targetTable = $(targetTableId).DataTable();
+
+    const existingIds = new Set(
+        targetTable.rows().data().toArray().map(row => row[1]) // assuming column 1 is the ID
+    );
+
+    const rowsToCopy = sourceTable.rows({ search: 'applied' }).nodes().toArray();
+
+    rowsToCopy.forEach(row => {
+        const checkbox = $(row).find('.row-checkbox');
+        const rowData = sourceTable.row(row).data();
+        const rowId = rowData[1]; // again, assuming column 1 is ID
+
+        if (checkbox.is(':checked') && !existingIds.has(rowId)) {
+            targetTable.row.add(rowData);
+            existingIds.add(rowId); // prevent future duplication in same click
         }
     });
+
+    targetTable.draw();
 }
+
 
 // Add selected from summary -> selection
 document.querySelector("#add-selected").addEventListener("click", () => {
-    moveRows("#summary-table", "#selection-table");
+    copyRows("#summary-table", "#selection-table");
 });
 
-// Remove selected from selection -> summary
 document.querySelector("#remove-selected").addEventListener("click", () => {
-    moveRows("#selection-table", "#summary-table");
+    const selectionTable = $('#selection-table').DataTable();
+
+    // Get all rows that are checked
+    selectionTable.rows({ search: 'applied' }).nodes().toArray().forEach(row => {
+        const checkbox = $(row).find('.row-checkbox');
+        if (checkbox.is(':checked')) {
+            selectionTable.row(row).remove(); // just remove, no copy back
+        }
+    });
+
+    selectionTable.draw(); // redraw after changes
 });
 
 // Clear all selected (remove all rows from selection table)
 document.querySelector("#clear-selected").addEventListener("click", () => {
-    const selectionTbody = document.querySelector("#selection-table tbody");
-    selectionTbody.innerHTML = '';
+    const selectionTable = $('#selection-table').DataTable();
+    selectionTable.clear().draw();
 });
 
-document.querySelector("#select-all-summary").addEventListener("change", function () {
-    const checkboxes = document.querySelectorAll("#summary-table .row-checkbox");
-    checkboxes.forEach(cb => cb.checked = this.checked);
+$('#select-all-summary').on('change', function () {
+    const table = $('#summary-table').DataTable();
+    const checked = $(this).prop('checked');
+
+    table.rows({ search: 'applied' }).nodes().each(function (row) {
+        $(row).find('.row-checkbox').prop('checked', checked);
+    });
 });
 
-document.querySelector("#select-all-selection").addEventListener("change", function () {
-    const checkboxes = document.querySelectorAll("#selection-table .row-checkbox");
-    checkboxes.forEach(cb => cb.checked = this.checked);
+$('#summary-table tbody').on('change', '.row-checkbox', function () {
+    const table = $('#summary-table').DataTable();
+    const all = table.rows({ search: 'applied' }).nodes().to$().find('.row-checkbox');
+    const allChecked = all.length > 0 && all.filter(':checked').length === all.length;
+    $('#select-all-summary').prop('checked', allChecked);
+});
+
+$('#select-all-selection').on('change', function () {
+    const table = $('#selection-table').DataTable();
+    const checked = $(this).prop('checked');
+
+    table.rows({ search: 'applied' }).nodes().each(function (row) {
+        $(row).find('.row-checkbox').prop('checked', checked);
+    });
+});
+
+$('#selection-table tbody').on('change', '.row-checkbox', function () {
+    const table = $('#selection-table').DataTable();
+    const all = table.rows({ search: 'applied' }).nodes().to$().find('.row-checkbox');
+    const allChecked = all.length > 0 && all.filter(':checked').length === all.length;
+    $('#select-all-selection').prop('checked', allChecked);
 });
 
 // Analyze selected rows
 document.querySelector("#analyze-batches").addEventListener("click", () => {
-    const rows = document.querySelectorAll("#selection-table tbody tr");
+    const selectionTable = $('#selection-table').DataTable();
+    const rows = selectionTable.rows().data();  // This gives you all row data
     const selectedData = [];
 
-    rows.forEach(row => {
-        const cells = row.querySelectorAll("td");
+    rows.each(function (rowData) {
         selectedData.push({
-            id: cells[1].textContent,
-            program: cells[2].textContent,
-            batch: cells[3].textContent,
-            date: cells[4].textContent,
-            start_time: cells[5].textContent,
-            end_time: cells[6].textContent,
-            duration: cells[7].textContent
+            id: rowData[1],
+            program: rowData[2],
+            batch: rowData[3],
+            date: rowData[4],
+            start_time: rowData[5],
+            end_time: rowData[6],
+            duration: rowData[7]
         });
     });
 
